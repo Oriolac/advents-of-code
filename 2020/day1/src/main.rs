@@ -1,6 +1,6 @@
 use std::env;
 use std::fs;
-use std::process::exit;
+use itertools::Itertools;
 
 fn main() {
 
@@ -13,12 +13,8 @@ fn main() {
         .expect("File not found");
     let words: Vec<&str> = contents.split_whitespace().collect();
     let integers: Vec<i32> = words.iter().map(|x| x.parse::<i32>().unwrap()).rev().collect();
-    for a in integers.iter() {
-        for b in integers.iter() {
-            if a + b == 2020 {
-                println!("{}", a * b);
-                exit(0);
-            }
-        }
-    }
+    let perms: Vec<Vec<i32>> = integers.into_iter().permutations(2).filter(|x| x[0] + x[1] == 2020).collect();
+    let solution: Vec<i32> = perms[0].clone();
+    println!("{}", solution[0] * solution[1]);
+
 }
