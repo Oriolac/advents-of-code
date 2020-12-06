@@ -1,15 +1,15 @@
 use std::{env, fs};
-use crate::Tile::{Nothing, Tree};
+use reduce::Reduce;
 
 #[derive(Clone, Copy, Debug)]
-enum Tile { Nothing(), Tree() }
+enum Tile { Snow, Tree }
 
 fn parse(line: String) -> Vec<Tile> {
     return line.chars()
         .map(|x| {
             return match x {
-                '.' => Some(Nothing()),
-                '#' => Some(Tree()),
+                '.' => Some(Tile::Snow),
+                '#' => Some(Tile::Tree),
                 _ => None,
             }.unwrap();
         })
@@ -23,13 +23,13 @@ struct Player {
 }
 
 impl Player {
-    fn move_to(&mut self, worldmap: Vec<Vec<Tile>>) {
+    fn move_to(&mut self, worldmap: Vec<Vec<Tile>>, x: usize, y: usize) {
         let module = worldmap[0].len();
-        self.x = (self.x + 3) % module;
-        self.y += 1;
+        self.x = (self.x + x) % module;
+        self.y += y;
         self.trees += match worldmap[self.y][self.x] {
-            Tree() => 1,
-            Nothing() => 0,
+            Tile::Tree => 1,
+            Tile::Snow => 0,
         };
     }
 
@@ -38,10 +38,10 @@ impl Player {
     }
 }
 
-fn trees_part_1(worldmap: Vec<Vec<Tile>>) -> usize {
+fn tree_count(worldmap: Vec<Vec<Tile>>, x: usize, y: usize) -> usize {
     let mut player = Player { x: 0, y: 0, trees: 0 };
     while player.has_finished(worldmap.len()) {
-        player.move_to(worldmap.clone());
+        player.move_to(worldmap.clone(), x, y);
     }
     player.trees
 }
@@ -54,5 +54,10 @@ fn main() {
         .split('\n')
         .map(|x| parse(String::from(x)))
         .collect();
-    println!("{}", trees_part_1(worldmap))
+    println!("{}", tree_count(worldmap.clone(), 3, 1));
+    let moves: Vec<(usize, usize)> = vec![(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)];
+    println!("{:?}",
+             moves.into_iter()
+                 .map(|x| tree_count(worldmap.clone(), x.0, x.1))
+                 .reduce(|x, y| x * y).unwrap());
 }
