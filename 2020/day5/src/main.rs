@@ -1,8 +1,6 @@
 use std::{env, fs};
-use std::str::Split;
 use reduce::Reduce;
 use std::cmp::max;
-use itertools::Tuples;
 
 
 struct Seat {
@@ -42,6 +40,10 @@ fn main() {
     println!("{}", to_seat("FBFBBFFRLR").get_id());
     let seats = lines.map(|x| to_seat_id(x)).collect::<Vec<i32>>();
     println!("{}", seats.iter().reduce(max).unwrap());
+    let mut ordered = seats.clone();
+    ordered.sort();
+    let seat = ordered.windows(2).find(|window| window[0]+1 != window[1]).unwrap();
+    println!("{}", seat[0] + 1);
 }
 
 fn to_seat_id(line: &str) -> i32 {
