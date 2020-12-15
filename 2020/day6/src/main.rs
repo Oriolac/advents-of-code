@@ -1,10 +1,6 @@
 use std::{env, fs};
 use std::collections::HashSet;
 use reduce::Reduce;
-use std::collections::hash_set::Intersection;
-use std::iter::FromIterator;
-use std::convert::TryFrom;
-use std::borrow::BorrowMut;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -19,7 +15,6 @@ fn main() {
 fn matching(lines: Vec<&str>) -> Vec<i32> {
     let mut vector: Vec<i32> = Vec::new();
     for groups in lines.split(|&x| x == "") {
-        println!("{:?}", groups);
         let group = groups.iter().map(|x| x.chars().collect::<HashSet<char>>()).collect::<Vec<HashSet<char>>>();
         let mut all_chars: HashSet<_> = HashSet::new();
         for member in group.iter() {
